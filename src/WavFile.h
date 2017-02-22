@@ -149,6 +149,20 @@ inline static void VokaturiWavFile_open (const char *fileName, VokaturiWavFile *
 			my f = NULL;
 			return;
 		}
+	} else if (! strncmp (header + 36, "LIST", 4)) {
+		int i = 2;
+		while(strncmp (header + 44 + i, "data", 4)) {
+				// printf("%d : %s\n", i, header + 44 + i);
+				i+=2;
+				if (i > 100) {
+						fprintf (stderr, "VokaturiWavFile error: %s contains un unrecognized \"%c%c%c%c\" chunk.\n", fileName,
+								header [36], header [37], header [38], header [39]);
+						fclose (my f);
+						my f = NULL;
+						return;
+				}
+		}
+		my sampleOffset = 44 + i;
 	} else {
 		fprintf (stderr, "VokaturiWavFile error: %s contains un unrecognized \"%c%c%c%c\" chunk.\n", fileName,
 			header [36], header [37], header [38], header [39]);
